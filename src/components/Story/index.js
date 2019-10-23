@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, Linking, Image} from 'react-native';
+import {StyleSheet, Text, View, Linking, Image, InteractionManager} from 'react-native';
 import {getStoryById} from "../../api/storiesApi";
 import {timestamp2TimeAgo} from "../../utils/helpers";
+import Ripple from 'react-native-material-ripple';
 import PropTypes from "prop-types";
 
 const Story = ({id, index}) => {
@@ -12,21 +13,28 @@ const Story = ({id, index}) => {
     }, []);
 
     function openStoryInBrowser() {
-        Linking.openURL(story.url);
+        const url = story.url;
+        if (url) {
+            InteractionManager.runAfterInteractions(() => {
+                Linking.openURL(url);
+            });
+        }
     }
 
-    return (story && story.id) ? <View style={styles.wrapperStyle}>
-        <View style={styles.sideSection}>
-            <Text style={styles.counterStyle}>{index}.</Text>
-            <Image style={styles.arrowStyle} source={require('../../../assets/grayarrow2x.gif')}/>
+    return (story && story.id) ? <Ripple rippleColor="rgb(255, 102, 0)" onPress={openStoryInBrowser}>
+        <View style={styles.wrapperStyle}>
+            <View style={styles.sideSection}>
+                <Text style={styles.counterStyle}>{index}.</Text>
+                <Image style={styles.arrowStyle} source={require('../../../assets/grayarrow2x.gif')}/>
+            </View>
+            <View style={styles.mainContent}>
+                <Text style={styles.titleStyle}>{story.title}</Text>
+                <Text style={styles.infoStyle}>
+                    {`${story.score} points by ${story.by} ${timestamp2TimeAgo(story.time)} | hide | ${story.descendants} comments`}
+                </Text>
+            </View>
         </View>
-        <View style={styles.mainContent}>
-            <Text style={styles.titleStyle} onPress={openStoryInBrowser}>{story.title}</Text>
-            <Text style={styles.infoStyle}>
-                {`${story.score} points by ${story.by} ${timestamp2TimeAgo(story.time)} | hide | ${story.descendants} comments`}
-            </Text>
-        </View>
-    </View> : null;
+    </Ripple> : null;
 };
 
 const styles = StyleSheet.create({
