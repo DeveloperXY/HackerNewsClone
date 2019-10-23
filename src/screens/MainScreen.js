@@ -13,7 +13,7 @@ const MainScreen = () => {
     return <FlatList
         data={storyIds}
         keyExtractor={id => id.toString()}
-        renderItem={({item: id}) => <Story id={id}/>}/>;
+        renderItem={({item: id, index}) => <Story id={id} index={index + 1}/>}/>;
 };
 
 const styles = StyleSheet.create({});
