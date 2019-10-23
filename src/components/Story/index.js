@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, Linking, Image} from 'react-native';
 import {getStoryById} from "../../api/storiesApi";
 import {timestamp2TimeAgo} from "../../utils/helpers";
+import PropTypes from "prop-types";
 
 const Story = ({id, index}) => {
     const [story, setStory] = useState(undefined);
@@ -58,5 +59,10 @@ const styles = StyleSheet.create({
         fontSize: 12
     }
 });
+
+Story.propTypes = {
+    id: PropTypes.number.isRequired,
+    index: PropTypes.number.isRequired
+};
 
 export default Story;
