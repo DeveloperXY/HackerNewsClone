@@ -1,13 +1,21 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {getStoryById} from "../../api/storiesApi";
+import {timestamp2TimeAgo} from "../../utils/helpers";
 
 const Story = ({id}) => {
-    return (
-        <View style={styles.wrapperStyle}>
-            <Text style={styles.titleStyle}>{id}</Text>
-            <Text style={styles.infoStyle}>56 points by dmcy22 1 hour ago | hide | 10 comments</Text>
-        </View>
-    );
+    const [story, setStory] = useState(undefined);
+
+    useEffect(() => {
+        getStoryById(id).then(setStory)
+    }, []);
+
+    return (story && story.id) ? <View style={styles.wrapperStyle}>
+        <Text style={styles.titleStyle}>{story.title}</Text>
+        <Text style={styles.infoStyle}>
+            {`${story.score} points by ${story.by} ${timestamp2TimeAgo(story.time)} | hide | ${story.descendants} comments`}
+        </Text>
+    </View> : null;
 };
 
 const styles = StyleSheet.create({
