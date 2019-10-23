@@ -18,4 +18,12 @@ const MainScreen = () => {
 
 const styles = StyleSheet.create({});
 
+MainScreen.navigationOptions = {
+    title: 'Hacker News',
+    headerStyle: {
+        backgroundColor: '#FF6600'
+    },
+    headerTintColor: '#fff',
+};
+
 export default MainScreen;
