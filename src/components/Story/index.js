@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Linking} from 'react-native';
 import {getStoryById} from "../../api/storiesApi";
 import {timestamp2TimeAgo} from "../../utils/helpers";
 
@@ -10,8 +10,12 @@ const Story = ({id}) => {
         getStoryById(id).then(setStory)
     }, []);
 
+    function openStoryInBrowser() {
+        Linking.openURL(story.url);
+    }
+
     return (story && story.id) ? <View style={styles.wrapperStyle}>
-        <Text style={styles.titleStyle}>{story.title}</Text>
+        <Text style={styles.titleStyle} onPress={openStoryInBrowser}>{story.title}</Text>
         <Text style={styles.infoStyle}>
             {`${story.score} points by ${story.by} ${timestamp2TimeAgo(story.time)} | hide | ${story.descendants} comments`}
         </Text>
