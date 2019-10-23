@@ -1,9 +1,10 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
+import Story from "../components/Story";
 
 const MainScreen = (props) => {
     return (
-        <Text>Hello world !</Text>
+        <Story/>
     );
 };
 
