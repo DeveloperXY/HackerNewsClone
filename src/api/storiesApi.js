@@ -1,12 +1,12 @@
 import {topStoriesUrl, getItemByIdUrl} from "./constants";
 
-export const getStoryIds = async () => {
+export const getStoryIds = () => {
     return fetch(topStoriesUrl)
         .then(res => res.json())
         .catch(error => console.log('error: ' + error));
 };
 
-export const getStoryById = async (id) => {
+export const getStoryById = (id) => {
     return fetch(getItemByIdUrl(id))
         .then(res => res.json())
         .catch(error => console.log('error: ' + error));
