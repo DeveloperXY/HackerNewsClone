@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, Linking, Image, InteractionManager} from 'react-native';
+import {StyleSheet, Text, View, Linking, Image, InteractionManager, ToastAndroid} from 'react-native';
 import {getStoryById} from "../../api/storiesApi";
 import {timestamp2TimeAgo} from "../../utils/helpers";
 import Ripple from 'react-native-material-ripple';
@@ -14,11 +14,14 @@ const Story = ({id, index}) => {
 
     function openStoryInBrowser() {
         const url = story.url;
-        if (url) {
-            InteractionManager.runAfterInteractions(() => {
-                Linking.openURL(url);
-            });
+        if (!url) {
+            ToastAndroid.show('URL not found', ToastAndroid.LONG);
+            return;
         }
+
+        InteractionManager.runAfterInteractions(() => {
+            Linking.openURL(url);
+        });
     }
 
     return (story && story.id) ? <Ripple rippleColor="rgb(255, 102, 0)" onPress={openStoryInBrowser}>
