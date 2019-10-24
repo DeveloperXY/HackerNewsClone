@@ -3,6 +3,9 @@ import {Image, InteractionManager, Linking, StyleSheet, Text, ToastAndroid, View
 import {timestamp2TimeAgo} from "../../utils/helpers";
 import Ripple from 'react-native-material-ripple';
 import PropTypes from "prop-types";
+import {colorDark, colorLight, colorPrimary} from "../../utils/colors";
+import {Card} from "react-native-paper";
+
 
 const Story = ({story, index}) => {
 
@@ -18,20 +21,30 @@ const Story = ({story, index}) => {
         });
     }
 
-    return (story && story.id) ? <Ripple rippleColor="rgb(255, 102, 0)" onPress={openStoryInBrowser}>
-        <View style={styles.wrapperStyle}>
-            <View style={styles.sideSection}>
-                <Text style={styles.counterStyle}>{index}.</Text>
-                <Image style={styles.arrowStyle} source={require('../../../assets/grayarrow2x.gif')}/>
-            </View>
-            <View style={styles.mainContent}>
-                <Text style={styles.titleStyle}>{story.title}</Text>
-                <Text style={styles.infoStyle}>
-                    {`${story.score} points by ${story.by} ${timestamp2TimeAgo(story.time)} | hide | ${story.descendants} comments`}
-                </Text>
-            </View>
-        </View>
-    </Ripple> : null;
+    return (story && story.id) ?
+        <Card style={{
+            marginTop: index === 1 ? 16 : 8,
+            marginBottom: 8,
+            marginLeft: 8,
+            marginRight: 8,
+        }} elevation={4}>
+            <Ripple rippleColor="rgb(255, 102, 0)" onPress={openStoryInBrowser}>
+                <View style={styles.wrapperStyle}>
+                    <View style={styles.sideSection}>
+                        <Text style={styles.counterStyle}>{story.score}</Text>
+                        <Image style={styles.arrowStyle} source={require('../../../assets/grayarrow2x.gif')}/>
+                    </View>
+                    <View style={styles.mainContent}>
+                        <Text style={styles.titleStyle}>{story.title}</Text>
+                        <Text style={styles.infoStyle}>
+                            {/*{`by ${story.by} ${timestamp2TimeAgo(story.time)} | hide | ${story.descendants} comments`}*/}
+                            {`${timestamp2TimeAgo(story.time)}, by `}
+                            <Text style={{color: colorLight}}>{`@${story.by}`}</Text>
+                        </Text>
+                    </View>
+                </View>
+            </Ripple>
+        </Card> : null;
 };
 
 const styles = StyleSheet.create({
@@ -43,8 +56,10 @@ const styles = StyleSheet.create({
         flex: 1
     },
     sideSection: {
+        width: 50,
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
         alignSelf: 'flex-start',
         marginRight: 4
     },
@@ -53,15 +68,18 @@ const styles = StyleSheet.create({
         height: 12
     },
     counterStyle: {
-        color: '#828282',
+        fontSize: 14,
+        color: colorLight,
         marginRight: 4
     },
     titleStyle: {
-        fontSize: 16
+        fontSize: 16,
+        color: colorDark,
+        fontWeight: 'bold'
     },
     infoStyle: {
-        color: '#828282',
-        fontSize: 12
+        fontSize: 12,
+        textAlign: 'right'
     }
 });
 

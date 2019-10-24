@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {FlatList, ProgressBarAndroid, StyleSheet, View} from 'react-native';
 import Story from "../components/Story";
 import {getStoryById, getStoryIds} from "../api/storiesApi";
+import {colorPrimary} from "../utils/colors";
 
 const LOADING_COUNTER_STEP = 20;
 
@@ -66,13 +67,13 @@ const MainScreen = ({navigation}) => {
 
     return isLoading && !isInitialized ?
         <View style={styles.progressBarWrapper}>
-            <ProgressBarAndroid color="#FF6600"/>
+            <ProgressBarAndroid color={colorPrimary}/>
         </View> :
         <FlatList
             data={items}
             keyExtractor={item => item.id()}
             renderItem={({item, index}) => {
-                return (item.isProgressIndicator) ? <ProgressBarAndroid color="#FF6600"/> :
+                return (item.isProgressIndicator) ? <ProgressBarAndroid color={colorPrimary}/> :
                     <Story story={item.story} index={index + 1}/>
             }}
             onEndReachedThreshold={0.5}
@@ -92,7 +93,7 @@ MainScreen.navigationOptions = ({ navigation }) => {
     return {
         title: state.params ? `${state.params.title}` : "Hacker News",
         headerStyle: {
-            backgroundColor: '#FF6600'
+            backgroundColor: colorPrimary
         },
         headerTintColor: '#fff',
     };
