@@ -4,12 +4,15 @@ import {Chip} from "react-native-paper";
 import {colorLight, colorWhite} from "../../utils/colors";
 import PropTypes from "prop-types";
 
-const CategoryChips = ({categories, selectedCategory}) => {
+const CategoryChips = ({categories, selectedCategory, ignorePress}) => {
     return categories.map((categoryItem, index) =>
         <Chip key={`${categoryItem.category}#${index}`}
               selectedColor={selectedCategory === categoryItem.category ? colorWhite : colorLight}
               selected={selectedCategory === categoryItem.category}
-              onPress={categoryItem.onPress}
+              onPress={() => {
+                  if (!ignorePress)
+                      categoryItem.onPress();
+              }}
               style={styles.chip}>{categoryItem.text}</Chip>);
 };
 
@@ -28,7 +31,8 @@ CategoryChips.propTypes = {
             text: PropTypes.string.isRequired
         })
     ),
-    selectedCategory: PropTypes.string.isRequired
+    selectedCategory: PropTypes.string.isRequired,
+    ignorePress: PropTypes.bool.isRequired
 };
 
 export default CategoryChips;

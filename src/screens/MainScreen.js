@@ -103,7 +103,11 @@ const MainScreen = ({navigation}) => {
 
     return <View>
         <View style={styles.chipContainer}>
-            <CategoryChips categories={categories} selectedCategory={selectedCategory}/>
+            <CategoryChips
+                categories={categories}
+                selectedCategory={selectedCategory}
+                ignorePress={isMainLoading}
+            />
         </View>
         {
             isMainLoading ?
