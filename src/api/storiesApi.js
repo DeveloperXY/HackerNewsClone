@@ -5,26 +5,38 @@ import {
     getItemByIdUrl
 } from "./constants";
 
-export const getTopStoryIds = () => {
-    return fetch(topStoriesUrl)
-        .then(res => res.json())
-        .catch(error => console.log('error: ' + error));
+export const getTopStoryIds = async () => {
+    try {
+        const response = await fetch(topStoriesUrl);
+        return await response.json();
+    } catch(err) {
+        console.log('error: ' + err)
+    }
 };
 
-export const getNewStoryIds = () => {
-    return fetch(newStoriesUrl)
-        .then(res => res.json())
-        .catch(error => console.log('error: ' + error));
+export const getNewStoryIds = async () => {
+    try {
+        const response = await fetch(newStoriesUrl);
+        return await response.json();
+    } catch(err) {
+        console.log('error: ' + err)
+    }
 };
 
-export const getBestStoryIds = () => {
-    return fetch(bestStoriesUrl)
-        .then(res => res.json())
-        .catch(error => console.log('error: ' + error));
+export const getBestStoryIds = async () => {
+    try {
+        const response = await fetch(bestStoriesUrl);
+        return await response.json();
+    } catch(err) {
+        console.log('error: ' + err)
+    }
 };
 
-export const getStoryById = (id) => {
-    return fetch(getItemByIdUrl(id))
-        .then(res => res.json())
-        .catch(error => console.log('error: ' + error));
+export const getStoryById = async (id) => {
+    try {
+        const response = await fetch(getItemByIdUrl(id));
+        return await response.json();
+    } catch(err) {
+        console.log('error: ' + err)
+    }
 };
