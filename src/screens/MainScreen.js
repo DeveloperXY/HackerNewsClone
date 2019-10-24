@@ -5,12 +5,14 @@ import {getStoryById, getStoryIds} from "../api/storiesApi";
 
 const LOADING_COUNTER_STEP = 20;
 
-const MainScreen = () => {
+const MainScreen = ({navigation}) => {
     const [storyIds, setStoryIds] = useState([]);
     const [items, setItems] = useState([]);
     const [count, setCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isInitialized, setIsInitialized] = useState(false);
+
+    console.log(navigation);
 
     useEffect(() => {
         getStoryIds().then((ids) => {
@@ -23,6 +25,10 @@ const MainScreen = () => {
         if (isInitialized)
             loadNextBatch();
     }, [isInitialized]);
+
+    useEffect(() => {
+        navigation.setParams({title: 'Hacker News' + (`${count === 0 ? '' : ` (${count})`}`)})
+    }, [count]);
 
     function handleLoadMore() {
         if (!isLoading) {
@@ -81,12 +87,15 @@ const styles = StyleSheet.create({
     }
 });
 
-MainScreen.navigationOptions = {
-    title: 'Hacker News',
-    headerStyle: {
-        backgroundColor: '#FF6600'
-    },
-    headerTintColor: '#fff',
+MainScreen.navigationOptions = ({ navigation }) => {
+    const {state} = navigation;
+    return {
+        title: state.params ? `${state.params.title}` : "Hacker News",
+        headerStyle: {
+            backgroundColor: '#FF6600'
+        },
+        headerTintColor: '#fff',
+    };
 };
 
 export default MainScreen;
