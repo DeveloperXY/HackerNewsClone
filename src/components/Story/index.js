@@ -23,7 +23,7 @@ const Story = ({story, index}) => {
 
     return (story && story.id) ?
         <Card style={{
-            marginTop: index === 1 ? 16 : 8,
+            marginTop: 8,
             marginBottom: 8,
             marginLeft: 8,
             marginRight: 8,
@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
     },
     counterStyle: {
         fontSize: 14,
-        color: colorLight,
         marginRight: 4
     },
     titleStyle: {
