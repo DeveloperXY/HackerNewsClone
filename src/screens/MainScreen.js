@@ -3,11 +3,11 @@ import {FlatList, ProgressBarAndroid, StyleSheet, View} from 'react-native';
 import Story from "../components/Story";
 import {getStoryById, getStoryIds} from "../api/storiesApi";
 
-const LOADING_COUNTER_STEP = 50;
+const LOADING_COUNTER_STEP = 20;
 
 const MainScreen = () => {
     const [storyIds, setStoryIds] = useState([]);
-    const [stories, setStories] = useState([]);
+    const [items, setItems] = useState([]);
     const [count, setCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isInitialized, setIsInitialized] = useState(false);
@@ -25,28 +25,50 @@ const MainScreen = () => {
     }, [isInitialized]);
 
     function handleLoadMore() {
-        loadNextBatch();
+        if (!isLoading) {
+            addProgressItem();
+            loadNextBatch();
+        }
+    }
+
+    function addProgressItem() {
+        setItems([...items, {
+            isProgressIndicator: true, id() {
+                return "progress_indicator"
+            }
+        }])
     }
 
     function loadNextBatch() {
+        setIsLoading(true);
         const requests = storyIds.slice(count, count + LOADING_COUNTER_STEP)
             .map(getStoryById);
         Promise.all(requests)
             .then(newStories => {
-            setIsLoading(false);
-            setStories([...stories, ...newStories]);
-            setCount(count + LOADING_COUNTER_STEP);
-        });
+                const oldItems = items.filter(item => !item.isProgressIndicator);
+                setIsLoading(false);
+                setItems([...oldItems,
+                    ...newStories.map(s => ({
+                        story: s, isProgressIndicator: false, id() {
+                            return s.id.toString()
+                        }
+                    }))
+                ]);
+                setCount(count + LOADING_COUNTER_STEP);
+            });
     }
 
-    return isLoading ?
+    return isLoading && !isInitialized ?
         <View style={styles.progressBarWrapper}>
             <ProgressBarAndroid color="#FF6600"/>
         </View> :
         <FlatList
-            data={stories}
-            keyExtractor={story => story.id.toString()}
-            renderItem={({item: story, index}) => <Story story={story} index={index + 1}/>}
+            data={items}
+            keyExtractor={item => item.id()}
+            renderItem={({item, index}) => {
+                return (item.isProgressIndicator) ? <ProgressBarAndroid color="#FF6600"/> :
+                    <Story story={item.story} index={index + 1}/>
+            }}
             onEndReachedThreshold={0.5}
             onEndReached={handleLoadMore}/>;
 };
