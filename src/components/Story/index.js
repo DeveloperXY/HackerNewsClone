@@ -8,7 +8,6 @@ import {Card} from "react-native-paper";
 
 
 const Story = ({story, index}) => {
-
     function openStoryInBrowser() {
         const url = story.url;
         if (!url) {

@@ -1,7 +1,24 @@
-import {topStoriesUrl, getItemByIdUrl} from "./constants";
+import {
+    topStoriesUrl,
+    newStoriesUrl,
+    bestStoriesUrl,
+    getItemByIdUrl
+} from "./constants";
 
-export const getStoryIds = () => {
+export const getTopStoryIds = () => {
     return fetch(topStoriesUrl)
+        .then(res => res.json())
+        .catch(error => console.log('error: ' + error));
+};
+
+export const getNewStoryIds = () => {
+    return fetch(newStoriesUrl)
+        .then(res => res.json())
+        .catch(error => console.log('error: ' + error));
+};
+
+export const getBestStoryIds = () => {
+    return fetch(bestStoriesUrl)
         .then(res => res.json())
         .catch(error => console.log('error: ' + error));
 };
