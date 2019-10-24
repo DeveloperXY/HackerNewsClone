@@ -1,16 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, Linking, Image, InteractionManager, ToastAndroid} from 'react-native';
-import {getStoryById} from "../../api/storiesApi";
+import React from 'react';
+import {Image, InteractionManager, Linking, StyleSheet, Text, ToastAndroid, View} from 'react-native';
 import {timestamp2TimeAgo} from "../../utils/helpers";
 import Ripple from 'react-native-material-ripple';
 import PropTypes from "prop-types";
 
-const Story = ({id, index}) => {
-    const [story, setStory] = useState(undefined);
-
-    useEffect(() => {
-        getStoryById(id).then(setStory)
-    }, []);
+const Story = ({story, index}) => {
 
     function openStoryInBrowser() {
         const url = story.url;
@@ -72,7 +66,7 @@ const styles = StyleSheet.create({
 });
 
 Story.propTypes = {
-    id: PropTypes.number.isRequired,
+    story: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired
 };
 

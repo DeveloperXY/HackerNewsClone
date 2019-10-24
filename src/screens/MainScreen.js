@@ -1,19 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, StyleSheet} from 'react-native';
+import {FlatList, ProgressBarAndroid, StyleSheet} from 'react-native';
 import Story from "../components/Story";
-import {getStoryIds} from "../api/storiesApi";
+import {getStoryById, getStoryIds} from "../api/storiesApi";
 
 const MainScreen = () => {
-    const [storyIds, setStoryIds] = useState([]);
+    const [stories, setStories] = useState([]);
 
     useEffect(() => {
-        getStoryIds().then(ids => setStoryIds(ids.slice(0, 20)));
+        getStoryIds().then(ids => ids.map(getStoryById))
+            .then(data => Promise.all(data))
+            .then(setStories);
     }, []);
 
     return <FlatList
-        data={storyIds}
-        keyExtractor={id => id.toString()}
-        renderItem={({item: id, index}) => <Story id={id} index={index + 1}/>}/>;
+        data={stories}
+        keyExtractor={story => story.id.toString()}
+        renderItem={({item: story, index}) => <Story story={story} index={index + 1}/>}/>;
 };
 
 const styles = StyleSheet.create({});
