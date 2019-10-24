@@ -4,8 +4,8 @@ import Story from "../components/Story";
 import {getBestStoryIds, getNewStoryIds, getStoryById, getTopStoryIds} from "../api/storiesApi";
 
 import {bestCategory, newCategory, topCategory} from '../utils/constants'
-import {colorLight, colorPrimary, colorWhite} from "../utils/colors";
-import CategoryChip from "../components/CategoryChip";
+import {colorPrimary} from "../utils/colors";
+import CategoryChips from "../components/CategoryChips";
 
 const LOADING_COUNTER_STEP = 20;
 
@@ -77,20 +77,33 @@ const MainScreen = ({navigation}) => {
             });
     }
 
+    const categories = [
+        {
+            text: 'Top',
+            onPress: () => {
+                setSelectedCategory(topCategory)
+            },
+            category: topCategory,
+        },
+        {
+            text: 'New',
+            onPress: () => {
+                setSelectedCategory(newCategory)
+            },
+            category: newCategory,
+        },
+        {
+            text: 'Best',
+            onPress: () => {
+                setSelectedCategory(bestCategory)
+            },
+            category: bestCategory,
+        }
+    ];
+
     return <View>
         <View style={styles.chipContainer}>
-            <CategoryChip selectedColor={selectedCategory === topCategory ? colorWhite : colorLight}
-                          selected={selectedCategory === topCategory}
-                          onPress={() => setSelectedCategory(topCategory)}
-                          text="Top"/>
-            <CategoryChip selectedColor={selectedCategory === newCategory ? colorWhite : colorLight}
-                          selected={selectedCategory === newCategory}
-                          onPress={() => setSelectedCategory(newCategory)}
-                          text="New"/>
-            <CategoryChip selectedColor={selectedCategory === bestCategory ? colorWhite : colorLight}
-                          selected={selectedCategory === bestCategory}
-                          onPress={() => setSelectedCategory(bestCategory)}
-                          text="Best"/>
+            <CategoryChips categories={categories} selectedCategory={selectedCategory}/>
         </View>
         {
             isMainLoading ?
