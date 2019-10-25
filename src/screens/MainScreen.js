@@ -101,7 +101,7 @@ const MainScreen = ({navigation}) => {
         }
     ];
 
-    return <View>
+    return <View style={{flex: 1}}>
         <View style={styles.chipContainer}>
             <CategoryChips
                 categories={categories}
@@ -114,7 +114,7 @@ const MainScreen = ({navigation}) => {
                 <View style={styles.progressBarWrapper}>
                     <ProgressBarAndroid color={colorPrimary}/>
                 </View> :
-                <View>
+                <View style={{flex: 1}}>
                     <FlatList
                         data={items}
                         keyExtractor={item => item.id()}
