@@ -32,7 +32,7 @@ export const getBestStoryIds = async () => {
     }
 };
 
-export const getStoryById = async (id) => {
+export const getItemById = async (id) => {
     try {
         const response = await fetch(getItemByIdUrl(id));
         return await response.json();

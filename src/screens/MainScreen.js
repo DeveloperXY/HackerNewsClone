@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, InteractionManager, Linking, ProgressBarAndroid, StyleSheet, ToastAndroid, View} from 'react-native';
 import Story from "../components/Story";
-import {getBestStoryIds, getNewStoryIds, getStoryById, getTopStoryIds} from "../api/storiesApi";
+import {getBestStoryIds, getNewStoryIds, getItemById, getTopStoryIds} from "../api/hackerNews";
 
 import {bestCategory, newCategory, topCategory} from '../utils/constants'
 import {colorPrimary} from "../utils/colors";
@@ -60,7 +60,7 @@ const MainScreen = ({navigation}) => {
     function loadNextBatch() {
         setIsLoading(true);
         const requests = storyIds.slice(count, count + LOADING_COUNTER_STEP)
-            .map(getStoryById);
+            .map(getItemById);
         Promise.all(requests)
             .then(newStories => {
                 const oldItems = items.filter(item => !item.isProgressIndicator);
