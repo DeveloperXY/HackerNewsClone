@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, ProgressBarAndroid, StyleSheet, View} from 'react-native';
+import {FlatList, InteractionManager, Linking, ProgressBarAndroid, StyleSheet, ToastAndroid, View} from 'react-native';
 import Story from "../components/Story";
 import {getBestStoryIds, getNewStoryIds, getStoryById, getTopStoryIds} from "../api/storiesApi";
 
@@ -101,6 +101,12 @@ const MainScreen = ({navigation}) => {
         }
     ];
 
+    const onStorySelected = (story) => {
+        InteractionManager.runAfterInteractions(() => {
+            navigation.navigate('Story', {story});
+        });
+    };
+
     return <View style={{flex: 1}}>
         <View style={styles.chipContainer}>
             <CategoryChips
@@ -118,9 +124,13 @@ const MainScreen = ({navigation}) => {
                     <FlatList
                         data={items}
                         keyExtractor={item => item.id()}
-                        renderItem={({item, index}) => {
+                        renderItem={({item}) => {
                             return (item.isProgressIndicator) ? <ProgressBarAndroid color={colorPrimary}/> :
-                                <Story story={item.story} index={index + 1}/>
+                                <Story
+                                    story={item.story}
+                                    onPress={() => {
+                                        onStorySelected(item.story);
+                                    }}/>
                         }}
                         onEndReachedThreshold={0.5}
                         onEndReached={handleLoadMore}/>

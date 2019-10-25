@@ -3,10 +3,12 @@ import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from "react-navigation-stack";
 import MainScreen from "./src/screens/MainScreen";
 import {Provider} from "react-native-paper";
+import StoryScreen from "./src/screens/StoryScreen";
 
 const navigator = createStackNavigator(
     {
-        Main: MainScreen
+        Main: MainScreen,
+        Story: StoryScreen
     },
     {
       initialRouteName: 'Main',

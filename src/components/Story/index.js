@@ -6,20 +6,7 @@ import PropTypes from "prop-types";
 import {colorDark, colorLight, colorPrimary} from "../../utils/colors";
 import {Card} from "react-native-paper";
 
-
-const Story = ({story, index}) => {
-    function openStoryInBrowser() {
-        const url = story.url;
-        if (!url) {
-            ToastAndroid.show('URL not found', ToastAndroid.LONG);
-            return;
-        }
-
-        InteractionManager.runAfterInteractions(() => {
-            Linking.openURL(url);
-        });
-    }
-
+const Story = ({story, onPress}) => {
     return (story && story.id) ?
         <Card style={{
             marginTop: 8,
@@ -27,16 +14,15 @@ const Story = ({story, index}) => {
             marginLeft: 8,
             marginRight: 8,
         }} elevation={4}>
-            <Ripple rippleColor="rgb(255, 102, 0)" onPress={openStoryInBrowser}>
+            <Ripple rippleColor="rgb(255, 102, 0)" onPress={onPress}>
                 <View style={styles.wrapperStyle}>
                     <View style={styles.sideSection}>
                         <Text style={styles.counterStyle}>{story.score}</Text>
                         <Image style={styles.arrowStyle} source={require('../../../assets/grayarrow2x.gif')}/>
                     </View>
                     <View style={styles.mainContent}>
-                        <Text style={styles.titleStyle}>{story.title}</Text>
+                        <Text style={styles.titleStyle} >{story.title}</Text>
                         <Text style={styles.infoStyle}>
-                            {/*{`by ${story.by} ${timestamp2TimeAgo(story.time)} | hide | ${story.descendants} comments`}*/}
                             {`${timestamp2TimeAgo(story.time)}, by `}
                             <Text style={{color: colorLight}}>{`@${story.by}`}</Text>
                         </Text>
@@ -83,7 +69,7 @@ const styles = StyleSheet.create({
 
 Story.propTypes = {
     story: PropTypes.object.isRequired,
-    index: PropTypes.number.isRequired
+    onPress: PropTypes.func.isRequired
 };
 
 export default Story;
