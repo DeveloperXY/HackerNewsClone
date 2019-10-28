@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {FlatList, InteractionManager, ProgressBarAndroid, StyleSheet, View} from 'react-native';
 import Story from "../components/Story";
-import {getBestStoryIds, getItemById, getNewStoryIds, getTopStoryIds} from "../api/hackerNews";
+import {getItemById, getStoryIdsByCategory} from "../api/hackerNews";
 
 import {bestCategory, newCategory, topCategory} from '../utils/constants'
 import {colorPrimary} from "../utils/colors";
@@ -13,14 +13,14 @@ const MainScreen = ({navigation}) => {
     const [storyIds, setStoryIds] = useState([]);
     const [items, setItems] = useState([]);
     const [count, setCount] = useState(0);
-    const [isMainLoading, setIsMainLoading] = useState(true);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isFullyLoading, setIsFullyLoading] = useState(true);
+    const [isPartiallyLoading, setIsPartiallyLoading] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(bestCategory);
 
     useEffect(() => {
         setItems([]);
         setCount(0);
-        getStoryIdsByCategory();
+        fetchStoryIdsByCategory();
     }, [selectedCategory]);
 
     useEffect(() => {
@@ -33,17 +33,15 @@ const MainScreen = ({navigation}) => {
         navigation.setParams({title: 'Hacker News' + (`${count === 0 ? '' : ` (${count})`}`)})
     }, [count]);
 
-    function getStoryIdsByCategory() {
-        setIsMainLoading(true);
-        const request = (selectedCategory === newCategory) ? getNewStoryIds() :
-            (selectedCategory === topCategory) ? getTopStoryIds() :
-                getBestStoryIds();
-        request.then(setStoryIds)
-            .catch(error => setIsMainLoading(false));
+    function fetchStoryIdsByCategory() {
+        setIsFullyLoading(true);
+        getStoryIdsByCategory(selectedCategory)
+            .then(setStoryIds)
+            .catch(err => console.log(err));
     }
 
     function handleLoadMore() {
-        if (!isLoading) {
+        if (!isPartiallyLoading) {
             addProgressItem();
             loadNextBatch();
         }
@@ -58,14 +56,12 @@ const MainScreen = ({navigation}) => {
     }
 
     function loadNextBatch() {
-        setIsLoading(true);
+        setIsPartiallyLoading(true);
         const requests = storyIds.slice(count, count + LOADING_COUNTER_STEP)
             .map(getItemById);
         Promise.all(requests)
             .then(newStories => {
                 const oldItems = items.filter(item => !item.isProgressIndicator);
-                setIsLoading(false);
-                setIsMainLoading(false);
                 setItems([...oldItems,
                     ...newStories.map(s => ({
                         story: s, isProgressIndicator: false, id() {
@@ -74,13 +70,15 @@ const MainScreen = ({navigation}) => {
                     }))
                 ]);
                 setCount(count + newStories.length);
+                setIsPartiallyLoading(false);
+                setIsFullyLoading(false);
             });
     }
 
     function synchronizedSetCategory(category) {
         InteractionManager.runAfterInteractions(() => {
             setSelectedCategory(category);
-        })
+        });
     }
 
     const categories = [
@@ -118,11 +116,11 @@ const MainScreen = ({navigation}) => {
             <CategoryChips
                 categories={categories}
                 selectedCategory={selectedCategory}
-                ignorePress={isMainLoading}
+                ignorePress={isFullyLoading}
             />
         </View>
         {
-            isMainLoading ?
+            isFullyLoading ?
                 <View style={styles.progressBarWrapper}>
                     <ProgressBarAndroid color={colorPrimary}/>
                 </View> :

@@ -14,7 +14,8 @@ const Comment = ({comment}) => {
     function fetchNestedComments() {
         if (!isLoading) {
             setIsLoading(true);
-            loadComments(comment.kids).then(setNestedComments)
+            loadComments(comment.kids)
+                .then(setNestedComments)
                 .then(() => setIsLoading(false));
         }
     }

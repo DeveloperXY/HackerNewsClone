@@ -4,6 +4,7 @@ import {
     bestStoriesUrl,
     getItemByIdUrl
 } from "./constants";
+import {newCategory, topCategory} from "../utils/constants";
 
 export const getTopStoryIds = async () => {
     try {
@@ -41,6 +42,7 @@ export const getItemById = async (id) => {
     }
 };
 
-export const loadComments = function (commentIds) {
-    return Promise.all(commentIds.map(getItemById));
-};
+export const getStoryIdsByCategory = (category) => (category === newCategory) ? getNewStoryIds() :
+    (category === topCategory) ? getTopStoryIds() : getBestStoryIds();
+
+export const loadComments = (commentIds) => Promise.all(commentIds.map(getItemById));
