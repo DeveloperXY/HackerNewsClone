@@ -2,21 +2,16 @@ import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {colorDark, colorLight, colorPrimary} from "../utils/colors";
 import {timestamp2TimeAgo} from "../utils/helpers";
-import {getItemById} from "../api/hackerNews";
 import Comment from "../components/Comment";
+import {loadComments} from "../api/hackerNews";
 
 const StoryScreen = ({navigation}) => {
     const [comments, setComments] = useState([]);
 
     useEffect(() => {
         const story = navigation.getParam('story');
-        loadComments(story.kids)
+        loadComments(story.kids).then(setComments);
     }, []);
-
-    const loadComments = function (commentIds) {
-        return Promise.all(commentIds.map(getItemById))
-            .then(setComments);
-    };
 
     return <View style={styles.container}>
         <View style={{margin: 16}}>

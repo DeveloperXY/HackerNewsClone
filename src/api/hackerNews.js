@@ -40,3 +40,7 @@ export const getItemById = async (id) => {
         console.log('error: ' + err)
     }
 };
+
+export const loadComments = function (commentIds) {
+    return Promise.all(commentIds.map(getItemById));
+};
