@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import {Chip} from "react-native-paper";
 import {colorLight, colorWhite} from "../../utils/colors";
 import PropTypes from "prop-types";
@@ -13,13 +13,18 @@ const CategoryChips = ({categories, selectedCategory, ignorePress}) => {
                   if (!ignorePress)
                       categoryItem.onPress();
               }}
-              style={styles.chip}>{categoryItem.text}</Chip>);
+              style={styles.chip}>
+            <Text style={styles.chipTextStyle}>{categoryItem.text}</Text>
+        </Chip>);
 };
 
 const styles = StyleSheet.create({
     chip: {
         marginRight: 8,
         marginLeft: 8
+    },
+    chipTextStyle: {
+        fontFamily: 'product-sans'
     }
 });
 

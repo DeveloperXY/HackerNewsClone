@@ -1,28 +1,32 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, ProgressBarAndroid, StyleSheet, Text, View} from 'react-native';
-import {colorDark, colorLight, colorPrimary} from "../utils/colors";
+import {colorPrimary, colorWhite} from "../utils/colors";
 import {timestamp2TimeAgo} from "../utils/helpers";
 import Comment from "../components/Comment";
 import {loadComments} from "../api/hackerNews";
+import {Card} from "react-native-paper";
 
 const LOADING_COUNTER_STEP = 10;
 
 const StoryScreen = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [items, setItems] = useState([]);
     const [count, setCount] = useState(0);
     const nestedCommentIds = navigation.getParam('story').kids;
 
     useEffect(() => {
+        setIsLoading(true);
         fetchComments();
     }, []);
 
     function fetchComments() {
-        setIsLoading(true);
+        setIsLoadingMore(true);
         loadComments(nestedCommentIds.slice(count, count + LOADING_COUNTER_STEP))
             .then(newComments => {
                 const oldItems = items.filter(item => !item.isProgressIndicator);
                 setIsLoading(false);
+                setIsLoadingMore(false);
                 setItems([...oldItems,
                     ...newComments.filter(c => c.by)
                         .map(c => ({
@@ -36,7 +40,7 @@ const StoryScreen = ({navigation}) => {
     }
 
     function handleLoadMore() {
-        if (!isLoading) {
+        if (!isLoading && !isLoadingMore) {
             addProgressItem();
             fetchComments();
         }
@@ -51,47 +55,52 @@ const StoryScreen = ({navigation}) => {
     }
 
     return <View style={styles.container}>
-        <View style={{margin: 16}}>
-            <Text style={styles.titleStyle}>{navigation.getParam('story').title}</Text>
-            <Text style={styles.infoStyle}>
-                {`${timestamp2TimeAgo(navigation.getParam('story').time)}, by `}
-                <Text style={{color: colorLight}}>{`@${navigation.getParam('story').by}`}</Text>
-            </Text>
+        <Card elevation={4}>
+            <View style={{padding: 16, backgroundColor: colorPrimary}}>
+                <Text style={styles.titleStyle}>{navigation.getParam('story').title}</Text>
+                <Text style={styles.infoStyle}>
+                    {`${timestamp2TimeAgo(navigation.getParam('story').time)}, by `}
+                    <Text style={{color: colorWhite}}>{`@${navigation.getParam('story').by}`}</Text>
+                </Text>
+            </View>
+        </Card>
+        <View style={{flex: 1, justifyContent: 'center'}}>
+            {
+                isLoading ? <ProgressBarAndroid style={styles.progressBar} color={colorPrimary}/> :
+                    <FlatList
+                        style={{paddingHorizontal: 16}}
+                        data={items}
+                        keyExtractor={item => item.id()}
+                        renderItem={({item}) => {
+                            return (item.isProgressIndicator) ? <ProgressBarAndroid color={colorPrimary}/> :
+                                <Comment comment={item.comment}/>
+                        }}
+                        onEndReachedThreshold={0.5}
+                        onEndReached={handleLoadMore}/>
+            }
         </View>
-        {
-            isLoading ? <ProgressBarAndroid color={colorPrimary}/> :
-                <FlatList
-                    style={{paddingHorizontal: 16}}
-                    data={items}
-                    keyExtractor={item => item.id()}
-                    renderItem={({item}) => {
-                        return (item.isProgressIndicator) ? <ProgressBarAndroid color={colorPrimary}/> :
-                            <Comment comment={item.comment}/>
-                    }}
-                    onEndReachedThreshold={0.5}
-                    onEndReached={handleLoadMore}/>
-        }
     </View>;
 };
 
 const styles = StyleSheet.create({
     titleStyle: {
-        fontSize: 16,
-        color: colorDark,
-        fontWeight: 'bold'
+        fontSize: 24,
+        color: colorWhite,
+        fontFamily: 'product-sans'
     },
     infoStyle: {
-        fontSize: 12
+        fontSize: 12,
+        textAlign: 'right',
+        fontFamily: 'product-sans'
     },
     container: {
         flex: 1
-    },
+    }
 });
 
 StoryScreen.navigationOptions = ({navigation}) => {
-    const {state} = navigation;
     return {
-        title: state.params ? `${state.params.story.title}` : "Hacker News",
+        title: "",
         headerStyle: {
             backgroundColor: colorPrimary
         },

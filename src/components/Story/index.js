@@ -3,17 +3,12 @@ import {Image, InteractionManager, Linking, StyleSheet, Text, ToastAndroid, View
 import {timestamp2TimeAgo} from "../../utils/helpers";
 import Ripple from 'react-native-material-ripple';
 import PropTypes from "prop-types";
-import {colorDark, colorLight, colorPrimary} from "../../utils/colors";
+import {colorBlack, colorDark, colorLight, colorPrimary} from "../../utils/colors";
 import {Card} from "react-native-paper";
 
 const Story = ({story, onPress}) => {
     return (story && story.id) ?
-        <Card style={{
-            marginTop: 8,
-            marginBottom: 8,
-            marginLeft: 8,
-            marginRight: 8,
-        }} elevation={4}>
+        <Card style={{margin: 8}} elevation={4}>
             <Ripple rippleColor="rgb(255, 102, 0)" onPress={onPress}>
                 <View style={styles.wrapperStyle}>
                     <View style={styles.sideSection}>
@@ -50,20 +45,24 @@ const styles = StyleSheet.create({
     },
     arrowStyle: {
         width: 12,
-        height: 12
+        height: 12,
+        marginBottom: 2
     },
     counterStyle: {
         fontSize: 14,
-        marginRight: 4
+        marginRight: 4,
+        color: colorLight,
+        fontFamily: 'product-sans'
     },
     titleStyle: {
         fontSize: 16,
-        color: colorDark,
-        fontWeight: 'bold'
+        color: colorBlack,
+        fontFamily: 'product-sans'
     },
     infoStyle: {
         fontSize: 12,
-        textAlign: 'right'
+        textAlign: 'right',
+        fontFamily: 'product-sans'
     }
 });
 

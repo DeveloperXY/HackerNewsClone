@@ -15,7 +15,7 @@ const Comment = ({comment}) => {
         if (!isLoading) {
             setIsLoading(true);
             loadComments(comment.kids)
-                .then(setNestedComments)
+                .then(comments => setNestedComments(comments.filter(c => c.by)))
                 .then(() => setIsLoading(false));
         }
     }
@@ -58,25 +58,25 @@ const Comment = ({comment}) => {
 
 const styles = StyleSheet.create({
     subheader: {
-        color: '#9e9e9e'
+        color: '#9e9e9e',
+        fontFamily: 'product-sans'
     },
     arrowStyle: {
         width: 12,
         height: 12,
-        marginTop: 4,
         marginRight: 4
     },
     hWrapper: {
         flexDirection: 'row',
-        marginBottom: 16,
+        marginTop: 16,
     },
     body: {
         flex: 1
     },
     subAction: {
         color: colorDark,
-        fontWeight: 'bold',
-        margin: 8
+        margin: 8,
+        fontFamily: 'product-sans-bold'
     },
     loadingProgressBar: {
         width: 24,

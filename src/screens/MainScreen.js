@@ -6,6 +6,7 @@ import {getItemById, getStoryIdsByCategory} from "../api/hackerNews";
 import {bestCategory, newCategory, topCategory} from '../utils/constants'
 import {colorPrimary} from "../utils/colors";
 import CategoryChips from "../components/CategoryChips";
+import Comment from "../components/Comment";
 
 const LOADING_COUNTER_STEP = 20;
 
@@ -41,7 +42,7 @@ const MainScreen = ({navigation}) => {
     }
 
     function handleLoadMore() {
-        if (!isPartiallyLoading) {
+        if (!isPartiallyLoading && !isFullyLoading) {
             addProgressItem();
             loadNextBatch();
         }
@@ -119,27 +120,29 @@ const MainScreen = ({navigation}) => {
                 ignorePress={isFullyLoading}
             />
         </View>
-        {
-            isFullyLoading ?
-                <View style={styles.progressBarWrapper}>
-                    <ProgressBarAndroid color={colorPrimary}/>
-                </View> :
-                <View style={{flex: 1}}>
-                    <FlatList
-                        data={items}
-                        keyExtractor={item => item.id()}
-                        renderItem={({item}) => {
-                            return (item.isProgressIndicator) ? <ProgressBarAndroid color={colorPrimary}/> :
-                                <Story
-                                    story={item.story}
-                                    onPress={() => {
-                                        onStorySelected(item.story);
-                                    }}/>
-                        }}
-                        onEndReachedThreshold={0.5}
-                        onEndReached={handleLoadMore}/>
-                </View>
-        }
+        <View style={{flex: 1, justifyContent: 'center'}}>
+            {
+                isFullyLoading ?
+                    <View style={styles.progressBarWrapper}>
+                        <ProgressBarAndroid color={colorPrimary}/>
+                    </View> :
+                    <View style={{flex: 1}}>
+                        <FlatList
+                            data={items}
+                            keyExtractor={item => item.id()}
+                            renderItem={({item}) => {
+                                return (item.isProgressIndicator) ? <ProgressBarAndroid color={colorPrimary}/> :
+                                    <Story
+                                        story={item.story}
+                                        onPress={() => {
+                                            onStorySelected(item.story);
+                                        }}/>
+                            }}
+                            onEndReachedThreshold={0.5}
+                            onEndReached={handleLoadMore}/>
+                    </View>
+            }
+        </View>
     </View>;
 };
 
