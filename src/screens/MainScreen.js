@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, InteractionManager, Linking, ProgressBarAndroid, StyleSheet, ToastAndroid, View} from 'react-native';
+import {FlatList, InteractionManager, ProgressBarAndroid, StyleSheet, View} from 'react-native';
 import Story from "../components/Story";
-import {getBestStoryIds, getNewStoryIds, getItemById, getTopStoryIds} from "../api/hackerNews";
+import {getBestStoryIds, getItemById, getNewStoryIds, getTopStoryIds} from "../api/hackerNews";
 
 import {bestCategory, newCategory, topCategory} from '../utils/constants'
 import {colorPrimary} from "../utils/colors";
@@ -77,25 +77,31 @@ const MainScreen = ({navigation}) => {
             });
     }
 
+    function synchronizedSetCategory(category) {
+        InteractionManager.runAfterInteractions(() => {
+            setSelectedCategory(category);
+        })
+    }
+
     const categories = [
         {
             text: 'Top',
             onPress: () => {
-                setSelectedCategory(topCategory)
+                synchronizedSetCategory(topCategory)
             },
             category: topCategory,
         },
         {
             text: 'New',
             onPress: () => {
-                setSelectedCategory(newCategory)
+                synchronizedSetCategory(newCategory)
             },
             category: newCategory,
         },
         {
             text: 'Best',
             onPress: () => {
-                setSelectedCategory(bestCategory)
+                synchronizedSetCategory(bestCategory)
             },
             category: bestCategory,
         }

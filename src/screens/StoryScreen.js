@@ -1,18 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {colorDark, colorLight, colorPrimary} from "../utils/colors";
 import {timestamp2TimeAgo} from "../utils/helpers";
 import {getItemById} from "../api/hackerNews";
-import HTML from 'react-native-render-html';
+import Comment from "../components/Comment";
 
 const StoryScreen = ({navigation}) => {
     const [comments, setComments] = useState([]);
 
     useEffect(() => {
-        const requests = navigation.getParam('story').kids
-            .map(getItemById);
-        Promise.all(requests).then(setComments)
+        const story = navigation.getParam('story');
+        loadComments(story.kids)
     }, []);
+
+    const loadComments = function (commentIds) {
+        return Promise.all(commentIds.map(getItemById))
+            .then(setComments);
+    };
 
     return <View style={styles.container}>
         <View style={{margin: 16}}>
@@ -24,15 +28,9 @@ const StoryScreen = ({navigation}) => {
         </View>
         <FlatList
             style={{paddingHorizontal: 16}}
-            data={comments.filter(c => !c.deleted && !c.dead)}
+            data={comments}
             keyExtractor={comment => comment.id.toString()}
-            renderItem={({item: comment}) => <View style={styles.wrapper}>
-                <Image style={styles.arrowStyle} source={require('../../assets/grayarrow2x.gif')}/>
-                <View style={styles.body}>
-                    <Text style={styles.subheader}>@{comment.by}, {`${timestamp2TimeAgo(comment.time)}`}</Text>
-                    <HTML key={comment.id} html={comment.text}/>
-                </View>
-            </View>}/>
+            renderItem={({item: comment}) => <Comment comment={comment}/>}/>
     </View>;
 };
 
@@ -48,22 +46,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
-    subheader: {
-        color: '#9e9e9e'
-    },
-    arrowStyle: {
-        width: 12,
-        height: 12,
-        marginTop: 4,
-        marginRight: 4
-    },
-    wrapper: {
-        flexDirection: 'row',
-        paddingVertical: 8
-    },
-    body: {
-        flex: 1
-    }
 });
 
 StoryScreen.navigationOptions = ({navigation}) => {
