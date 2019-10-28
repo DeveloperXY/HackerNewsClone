@@ -11,7 +11,7 @@ const Comment = ({comment}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [nestedComments, setNestedComments] = useState([]);
 
-    function loadNestedComments() {
+    function fetchNestedComments() {
         if (!isLoading) {
             setIsLoading(true);
             loadComments(comment.kids).then(setNestedComments)
@@ -36,15 +36,15 @@ const Comment = ({comment}) => {
                 isThreaded() && (
                     areThreadsAvailable() ?
                         <FlatList
-                            style={{paddingHorizontal: 16}}
+                            style={{paddingLeft: 4}}
                             data={nestedComments}
                             keyExtractor={comment => comment.id.toString()}
                             renderItem={({item: comment}) => <Comment comment={comment}/>}/>
                         :
                         <Ripple rippleColor={colorDark} style={{alignSelf: 'flex-start'}}
-                                onPress={loadNestedComments}>
+                                onPress={fetchNestedComments}>
                             <View style={{flexDirection: 'row'}}>
-                                <Text style={styles.subAction}>View replies</Text>
+                                <Text style={styles.subAction}>{isLoading ? 'Loading' : 'View'} replies</Text>
                                 {isLoading && <ProgressBarAndroid
                                     style={styles.loadingProgressBar} color={colorPrimary}/>}
                             </View>

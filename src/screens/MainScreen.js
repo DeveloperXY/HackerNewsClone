@@ -73,7 +73,7 @@ const MainScreen = ({navigation}) => {
                         }
                     }))
                 ]);
-                setCount(count + LOADING_COUNTER_STEP);
+                setCount(count + newStories.length);
             });
     }
 
