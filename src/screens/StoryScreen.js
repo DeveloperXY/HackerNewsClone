@@ -13,7 +13,7 @@ const StoryScreen = ({navigation}) => {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [items, setItems] = useState([]);
     const [count, setCount] = useState(0);
-    const nestedCommentIds = navigation.getParam('story').kids;
+    const commentIds = navigation.getParam('story').kids;
 
     useEffect(() => {
         setIsLoading(true);
@@ -22,7 +22,7 @@ const StoryScreen = ({navigation}) => {
 
     function fetchComments() {
         setIsLoadingMore(true);
-        loadComments(nestedCommentIds.slice(count, count + LOADING_COUNTER_STEP))
+        loadComments(commentIds.slice(count, count + LOADING_COUNTER_STEP))
             .then(newComments => {
                 const oldItems = items.filter(item => !item.isProgressIndicator);
                 setIsLoading(false);

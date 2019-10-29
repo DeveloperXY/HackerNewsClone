@@ -1,9 +1,9 @@
 import React from 'react';
-import {Image, InteractionManager, Linking, StyleSheet, Text, ToastAndroid, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import {timestamp2TimeAgo} from "../../utils/helpers";
 import Ripple from 'react-native-material-ripple';
 import PropTypes from "prop-types";
-import {colorBlack, colorDark, colorLight, colorPrimary} from "../../utils/colors";
+import {colorBlack, colorLight} from "../../utils/colors";
 import {Card} from "react-native-paper";
 
 const Story = ({story, onPress}) => {
@@ -16,7 +16,7 @@ const Story = ({story, onPress}) => {
                         <Image style={styles.arrowStyle} source={require('../../../assets/grayarrow2x.gif')}/>
                     </View>
                     <View style={styles.mainContent}>
-                        <Text style={styles.titleStyle} >{story.title}</Text>
+                        <Text style={styles.titleStyle}>{story.title}</Text>
                         <Text style={styles.infoStyle}>
                             {`${timestamp2TimeAgo(story.time)}, by `}
                             <Text style={{color: colorLight}}>{`@${story.by}`}</Text>

@@ -5,6 +5,7 @@ import HTML from "react-native-render-html";
 import {colorDark, colorPrimary} from "../../utils/colors";
 import Ripple from "react-native-material-ripple";
 import {loadComments} from "../../api/hackerNews";
+import PropTypes from "prop-types";
 
 const Comment = ({comment}) => {
 
@@ -16,7 +17,7 @@ const Comment = ({comment}) => {
             setIsLoading(true);
             loadComments(comment.kids)
                 .then(comments => setNestedComments(comments.filter(c => c.by)))
-                .then(() => setIsLoading(false));
+                .finally(() => setIsLoading(false));
         }
     }
 
@@ -84,5 +85,15 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     }
 });
+
+Comment.propTypes = {
+    comment: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        time: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
+        by: PropTypes.string.isRequired,
+        kids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    })
+};
 
 export default Comment;

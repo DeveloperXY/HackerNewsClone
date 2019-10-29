@@ -1,12 +1,11 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FlatList, InteractionManager, ProgressBarAndroid, StyleSheet, View} from 'react-native';
 import Story from "../components/Story";
 import {getItemById, getStoryIdsByCategory} from "../api/hackerNews";
 
-import {bestCategory, newCategory, topCategory} from '../utils/constants'
+import {BEST_CATEGORY, NEW_CATEGORY, TOP_CATEGORY, DEFAULT_CATEGORY} from '../utils/constants'
 import {colorPrimary} from "../utils/colors";
 import CategoryChips from "../components/CategoryChips";
-import Comment from "../components/Comment";
 
 const LOADING_COUNTER_STEP = 20;
 
@@ -14,9 +13,9 @@ const MainScreen = ({navigation}) => {
     const [storyIds, setStoryIds] = useState([]);
     const [items, setItems] = useState([]);
     const [count, setCount] = useState(0);
-    const [isFullyLoading, setIsFullyLoading] = useState(true);
-    const [isPartiallyLoading, setIsPartiallyLoading] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState(bestCategory);
+    const [isLoading, setIsLoading] = useState(true); // main progress bar
+    const [isLoadingMore, setIsLoadingMore] = useState(false); // incremental progress bar
+    const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORY);
 
     useEffect(() => {
         setItems([]);
@@ -26,7 +25,7 @@ const MainScreen = ({navigation}) => {
 
     useEffect(() => {
         if (storyIds.length !== 0) {
-            loadNextBatch();
+            fetchStories();
         }
     }, [storyIds]);
 
@@ -35,16 +34,16 @@ const MainScreen = ({navigation}) => {
     }, [count]);
 
     function fetchStoryIdsByCategory() {
-        setIsFullyLoading(true);
+        setIsLoading(true);
         getStoryIdsByCategory(selectedCategory)
             .then(setStoryIds)
             .catch(err => console.log(err));
     }
 
     function handleLoadMore() {
-        if (!isPartiallyLoading && !isFullyLoading) {
+        if (!isLoadingMore && !isLoading) {
             addProgressItem();
-            loadNextBatch();
+            fetchStories();
         }
     }
 
@@ -56,8 +55,8 @@ const MainScreen = ({navigation}) => {
         }])
     }
 
-    function loadNextBatch() {
-        setIsPartiallyLoading(true);
+    function fetchStories() {
+        setIsLoadingMore(true);
         const requests = storyIds.slice(count, count + LOADING_COUNTER_STEP)
             .map(getItemById);
         Promise.all(requests)
@@ -71,40 +70,16 @@ const MainScreen = ({navigation}) => {
                     }))
                 ]);
                 setCount(count + newStories.length);
-                setIsPartiallyLoading(false);
-                setIsFullyLoading(false);
+                setIsLoadingMore(false);
+                setIsLoading(false);
             });
     }
 
-    function synchronizedSetCategory(category) {
+    function setCategory(category) {
         InteractionManager.runAfterInteractions(() => {
             setSelectedCategory(category);
         });
     }
-
-    const categories = [
-        {
-            text: 'Top',
-            onPress: () => {
-                synchronizedSetCategory(topCategory)
-            },
-            category: topCategory,
-        },
-        {
-            text: 'New',
-            onPress: () => {
-                synchronizedSetCategory(newCategory)
-            },
-            category: newCategory,
-        },
-        {
-            text: 'Best',
-            onPress: () => {
-                synchronizedSetCategory(bestCategory)
-            },
-            category: bestCategory,
-        }
-    ];
 
     const onStorySelected = (story) => {
         InteractionManager.runAfterInteractions(() => {
@@ -112,17 +87,41 @@ const MainScreen = ({navigation}) => {
         });
     };
 
+    const categories = [
+        {
+            text: 'Top',
+            onPress: () => {
+                setCategory(TOP_CATEGORY)
+            },
+            category: TOP_CATEGORY,
+        },
+        {
+            text: 'New',
+            onPress: () => {
+                setCategory(NEW_CATEGORY)
+            },
+            category: NEW_CATEGORY,
+        },
+        {
+            text: 'Best',
+            onPress: () => {
+                setCategory(BEST_CATEGORY)
+            },
+            category: BEST_CATEGORY,
+        }
+    ];
+
     return <View style={{flex: 1}}>
         <View style={styles.chipContainer}>
             <CategoryChips
                 categories={categories}
                 selectedCategory={selectedCategory}
-                ignorePress={isFullyLoading}
+                ignorePress={isLoading}
             />
         </View>
         <View style={{flex: 1, justifyContent: 'center'}}>
             {
-                isFullyLoading ?
+                isLoading ?
                     <View style={styles.progressBarWrapper}>
                         <ProgressBarAndroid color={colorPrimary}/>
                     </View> :
